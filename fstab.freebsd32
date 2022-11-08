@@ -1,0 +1,5 @@
+## Mountpoint(s) for the FreeBSD jail
+# Dev   Mountpoint      FS              Options         Dump / Check
+
+tmpfs           /usr/jails/freebsd32/tmp   tmpfs   rw,late,mode=1777 0 0
+/tmp            /usr/jails/freebsd32/tmp   nullfs          rw,late 0 0
