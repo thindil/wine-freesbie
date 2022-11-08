@@ -20,7 +20,7 @@ on:
         type: string
 
 jobs:
-  64-bit:
+  freebsd64:
     runs-on: macos-12
     steps:
     - uses: actions/checkout@v2
@@ -39,7 +39,7 @@ jobs:
         tag_name: 13.1-amd64
         files: '*.pkg'
 
-  32-bit:
+  freebsd32:
     runs-on: macos-12
     steps:
     - uses: actions/checkout@v2
