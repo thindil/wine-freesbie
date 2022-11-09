@@ -58,12 +58,12 @@ jobs:
           rm base.txz
           cp /etc/resolv.conf /usr/jails/freebsd32/etc/
           sed -i '' -e 's/quarterly/latest/g' /usr/jails/freebsd32/etc/pkg/FreeBSD.conf
-          jail -c -f /Users/runner/work/playground/playground/jail.conf freebsd32
+          jail -c -f /Users/runner/work/wine-freesbie/wine-freesbie/jail.conf freebsd32
           jexec freebsd32 pkg install -y git nim
           jexec freebsd32 git clone https://git.FreeBSD.org/ports.git /usr/ports
           jexec freebsd32 nim --hints:off build.nims ${{ inputs.wineversion }} ${{ inputs.winetype }}
           jexec freebsd32 cp work/pkg/*.pkg /
-          cp /usr/jails/freebsd32/*.pkg /Users/runner/work/playground/playground/          
+          cp /usr/jails/freebsd32/*.pkg /Users/runner/work/wine-freesbie/wine-freesbie/          
           
     - name: Release
       uses: softprops/action-gh-release@v1
