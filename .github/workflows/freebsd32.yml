@@ -1,0 +1,54 @@
+name: Build Wine for FreeBSD 32bit
+
+on: 
+  workflow_dispatch:
+    inputs:
+      winetype:
+        description: "The type of Wine to build"
+        required: true
+        default: "staging"
+        type: choice
+        options:
+        - staging
+        - proton
+        - devel
+        - patched
+      wineversion:
+        description: "The version of Wine to build"
+        required: true
+        default: "7.4"
+        type: string
+
+jobs:
+  freebsd32:
+    runs-on: macos-12
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build Wine for FreeBSD 32-bit
+      uses: vmactions/freebsd-vm@v0
+      with:
+        run: |
+          mkdir -p /usr/jails/freebsd32
+          cp build.nims /usr/jails/freebsd32/
+          cp -R patches /usr/jails/freebsd32/
+          cp -R new /usr/jails/freebsd32/
+          cd /usr/jails/freebsd32
+          fetch ftp://ftp2.de.freebsd.org/pub/FreeBSD/releases/i386/i386/13.1-RELEASE/base.txz
+          tar xf base.txz
+          rm -rf boot
+          rm base.txz
+          cp /etc/resolv.conf /usr/jails/freebsd32/etc/
+          sed -i '' -e 's/quarterly/latest/g' /usr/jails/freebsd32/etc/pkg/FreeBSD.conf
+          jail -c -f /Users/runner/work/wine-freesbie/wine-freesbie/jail.conf freebsd32
+          jexec freebsd32 pkg install -y git nim
+          jexec freebsd32 git clone https://git.FreeBSD.org/ports.git /usr/ports
+          jexec freebsd32 nim --hints:off build.nims ${{ inputs.wineversion }} ${{ inputs.winetype }}
+          jexec freebsd32 cp work/pkg/*.pkg /
+          cp /usr/jails/freebsd32/*.pkg /Users/runner/work/wine-freesbie/wine-freesbie/          
+          
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: 13.1-i386
+        tag_name: 13.1-i386
+        files: '*.pkg'
