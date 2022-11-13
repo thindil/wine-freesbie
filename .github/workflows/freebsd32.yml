@@ -27,6 +27,7 @@ jobs:
     - name: Build Wine for FreeBSD 32-bit
       uses: vmactions/freebsd-vm@v0
       with:
+        mem: 4096
         run: |
           mkdir -p /usr/jails/freebsd32
           cp build.nims /usr/jails/freebsd32/

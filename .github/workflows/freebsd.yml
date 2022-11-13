@@ -27,6 +27,7 @@ jobs:
     - name: Build Wine for FreeBSD 64-bit
       uses: vmactions/freebsd-vm@v0
       with:
+        mem: 4096
         run: |
           pkg install -y git nim
           git clone https://git.FreeBSD.org/ports.git /usr/ports
