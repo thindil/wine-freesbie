@@ -20,13 +20,13 @@ if not options.hasKey(version):
 cd "/usr/ports"
 
 if options[version].len() > 0:
+  rmDir("/usr/ports/emulators/wine-" & wineType)
   exec "git checkout " & options[version] & " emulators/wine-" & wineType
 
 if fileSubname == "patched":
   cpDir(homeDir & "/patches/" & version & "/wine-" & wineType, "/usr/ports/emulators/wine-" & wineType)
   
 if options[version].len() == 0:
-  rmDir("/usr/ports/emulators/wine-" & wineType)
   cpDir(homeDir & "/new/" & version & "/wine-" & wineType, "/usr/ports/emulators/wine-" & wineType)
 
 cd "emulators/wine-" & wineType
