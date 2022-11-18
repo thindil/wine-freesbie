@@ -1,6 +1,6 @@
 name: Build Wine for FreeBSD
 
-on: 
+on:
   workflow_dispatch:
     inputs:
       winetype:
@@ -18,6 +18,14 @@ on:
         required: true
         default: "7.4"
         type: string
+      outputfile:
+        description: "Redirect output to"
+        required: true
+        default: "/dev/null"
+        type: choice
+        options:
+        - /dev/null
+        - output.txt
 
 jobs:
   freebsd64:
@@ -31,8 +39,15 @@ jobs:
         run: |
           pkg install -y git nim
           git clone https://git.FreeBSD.org/ports.git /usr/ports
-          nim --hints:off build.nims ${{ inputs.wineversion }} ${{ inputs.winetype }} >& /dev/null
-          
+          nim --hints:off build.nims ${{ inputs.wineversion }} ${{ inputs.winetype }} >& ${{ inputs.outputfile }}
+
+    - name: Upload the output
+      uses: actions/upload-artifact@v2
+      if: ${{ always() && inputs.outputfile == 'output.txt'}}
+      with:
+         name: output.txt
+         path: output.txt
+
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
@@ -62,10 +77,17 @@ jobs:
           jail -c -f /Users/runner/work/wine-freesbie/wine-freesbie/jail.conf freebsd32
           jexec freebsd32 pkg install -y git nim
           jexec freebsd32 git clone https://git.FreeBSD.org/ports.git /usr/ports
-          jexec freebsd32 nim --hints:off build.nims ${{ inputs.wineversion }} ${{ inputs.winetype }} >& /dev/null
+          jexec freebsd32 nim --hints:off build.nims ${{ inputs.wineversion }} ${{ inputs.winetype }} >& ${{ inputs.outputfile }}
           jexec freebsd32 cp work/pkg/*.pkg /
-          cp /usr/jails/freebsd32/*.pkg /Users/runner/work/wine-freesbie/wine-freesbie/          
-          
+          cp /usr/jails/freebsd32/*.pkg /Users/runner/work/wine-freesbie/wine-freesbie/
+
+    - name: Upload the output
+      uses: actions/upload-artifact@v2
+      if: ${{ always() && inputs.outputfile == 'output.txt'}}
+      with:
+         name: output32.txt
+         path: output.txt
+
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
