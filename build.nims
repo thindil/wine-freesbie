@@ -18,9 +18,9 @@ if not options.hasKey(version):
   quit "Unknown version of Wine"
 
 cd "/usr/ports"
+rmDir("/usr/ports/emulators/wine-" & wineType)
 
 if options[version].len() > 0:
-  rmDir("/usr/ports/emulators/wine-" & wineType)
   exec "git checkout " & options[version] & " emulators/wine-" & wineType
 
 if fileSubname == "patched":
