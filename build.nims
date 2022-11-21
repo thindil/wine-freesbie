@@ -1,39 +1,84 @@
+# Copyright © 2022 Bartek Jasicki <thindil@laeran.pl>
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+# 3. Neither the name of the copyright holder nor the
+# names of its contributors may be used to endorse or promote products
+# derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDERS AND CONTRIBUTORS ''AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 import std/[tables, os, strutils]
 
+# Install needed dependencies for build any wine. Later will be good to replace
+# it with longer list, so it will not depends on the newest wine package which
+# can have different requirements.
 exec "pkg install -y wine-devel wine-proton llvm12 pkgconf gmake flex bison bash s2tc autoconf gawk"
+# Remove unneeded packages.
 exec "pkg remove -y wine-devel wine-proton"
+# Remove downloaded packages.
 exec "pkg clean -ay"
 
+# The list of available wine versions in list of key = value. Key is the
+# version of Wine, value is the hash of the Git commit for the selected
+# version. If hash is empty, the version doesn't exists in FreeBSD packages
+# tree.
 const options = {"7.4": "7249a84325346313c492f47498156eedc23af0ae",
     "7.17": "481a5510a777eec0c9b7b95499422fea5344b932",
     "7.0-4": ""}.toTable
 
+# Set some variables needed to build the selected Wine version.
 let
   version = paramStr(3)
   fileSubname = paramStr(4)
   wineType = if fileSubname in ["patched", "staging", "devel"]: "devel" else: "proton"
   homeDir = getCurrentDir()
 
+# The selected Wine version doesn't exists in the list, abort
 if not options.hasKey(version):
   quit "Unknown version of Wine"
 
+# Enter the ports' tree and delete existing port so we been sure that there
+# no new patches around.
 cd "/usr/ports"
 rmDir("/usr/ports/emulators/wine-" & wineType)
 
+# If build an existing version of Wine, checkout the port with the proper
+# Git commit
 if options[version].len() > 0:
   exec "git checkout " & options[version] & " emulators/wine-" & wineType
 
+# If build a patched version of Wine, copy the proper patch to the port
 if fileSubname == "patched":
   cpDir(homeDir & "/patches/" & version & "/wine-" & wineType, "/usr/ports/emulators/wine-" & wineType)
-  
+
+# If build a new version of Wine, copy the proper port to the ports' tree
 if options[version].len() == 0:
   cpDir(homeDir & "/new/" & version & "/wine-" & wineType, "/usr/ports/emulators/wine-" & wineType)
 
+# Enter the port directory
 cd "emulators/wine-" & wineType
 
+# Update the distfiles file
 if options[version].len() == 0:
   exec "make makesum"
 
+# And build it
 if wineType == "proton":
   exec "make package"
 elif fileSubname == "devel":
@@ -42,6 +87,8 @@ else:
   rmDir "/usr/ports/.git"
   exec "env WITH=STAGING NO_DIALOG=true make package"
 
+# Copy the build package to the starting directory so it can be moved later
+# to download.
 let
   files = listFiles("work/pkg")
   newName = replace(files[0], wineType, paramStr(4)).extractFilename()
