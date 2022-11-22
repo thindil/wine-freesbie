@@ -25,12 +25,8 @@
 
 import std/[tables, os, strutils]
 
-# Install needed dependencies for build any wine. Later will be good to replace
-# it with longer list, so it will not depends on the newest wine package which
-# can have different requirements.
-exec "pkg install -y wine-devel wine-proton llvm12 pkgconf gmake flex bison bash s2tc autoconf gawk"
-# Remove unneeded packages.
-exec "pkg remove -y wine-devel wine-proton"
+# Install needed dependencies for build any type of Wine package.
+exec "pkg install -y libXrender libXrandr libXinerama libXi libXext libXcursor libXcomposite libX11 fontconfig libxml2 gnutls freetype2 gstreamer1-plugins-good gstreamer1-plugins gstreamer1 gcc vulkan-loader png jxrlib libglvnd lcms2 jpeg-turbo sdl2 glib gettext-runtime desktop-file-utils openal-soft FAudio libGLU llvm12 pkgconf gmake flex bison bash s2tc autoconf gawk"
 # Remove downloaded packages.
 exec "pkg clean -ay"
 
