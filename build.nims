@@ -36,6 +36,7 @@ exec "pkg clean -ay"
 # tree.
 const options = {"7.4": "7249a84325346313c492f47498156eedc23af0ae",
     "7.17": "481a5510a777eec0c9b7b95499422fea5344b932",
+    "7.21": "624f970c8499b1d9fef9e187cc28fc9feaaabd13",
     "7.0-4": ""}.toTable
 
 # Set some variables needed to build the selected Wine version.
