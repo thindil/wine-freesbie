@@ -31,7 +31,7 @@ jobs:
   freebsd64:
     runs-on: macos-12
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Build Wine for FreeBSD 64-bit
       uses: vmactions/freebsd-vm@v0
       with:
@@ -42,7 +42,7 @@ jobs:
           nim --hints:off build.nims ${{ inputs.wineversion }} ${{ inputs.winetype }} >& ${{ inputs.outputfile }}
 
     - name: Upload the output
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: ${{ always() && inputs.outputfile == 'output.txt'}}
       with:
          name: output.txt
@@ -57,7 +57,7 @@ jobs:
   freebsd32:
     runs-on: macos-12
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Build Wine for FreeBSD 32-bit
       uses: vmactions/freebsd-vm@v0
       with:
@@ -82,7 +82,7 @@ jobs:
           cp /usr/jails/freebsd32/*.pkg /Users/runner/work/wine-freesbie/wine-freesbie/
 
     - name: Upload the output
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: ${{ always() && inputs.outputfile == 'output.txt'}}
       with:
          name: output32.txt
