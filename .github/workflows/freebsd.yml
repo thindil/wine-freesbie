@@ -36,10 +36,11 @@ jobs:
       uses: vmactions/freebsd-vm@v0
       with:
         mem: 4096
+        usesh: true
         run: |
           pkg install -y git nim
           git clone https://github.com/freebsd/freebsd-ports.git /usr/ports
-          nim --hints:off build.nims ${{ inputs.wineversion }} ${{ inputs.winetype }} >& ${{ inputs.outputfile }}
+          nim --hints:off build.nims ${{ inputs.wineversion }} ${{ inputs.winetype }} > ${{ inputs.outputfile }} 2>&1
 
     - name: Upload the output
       uses: actions/upload-artifact@v3
@@ -62,6 +63,7 @@ jobs:
       uses: vmactions/freebsd-vm@v0
       with:
         mem: 4096
+        usesh: true
         run: |
           mkdir -p /usr/jails/freebsd32
           cp build.nims /usr/jails/freebsd32/
@@ -77,7 +79,7 @@ jobs:
           jail -c -f /Users/runner/work/wine-freesbie/wine-freesbie/jail.conf freebsd32
           jexec freebsd32 pkg install -y git nim
           jexec freebsd32 git clone https://github.com/freebsd/freebsd-ports.git /usr/ports
-          jexec freebsd32 nim --hints:off build.nims ${{ inputs.wineversion }} ${{ inputs.winetype }} >& ${{ inputs.outputfile }}
+          jexec freebsd32 nim --hints:off build.nims ${{ inputs.wineversion }} ${{ inputs.winetype }} > ${{ inputs.outputfile }} 2>&1
           jexec freebsd32 cp work/pkg/*.pkg /
           cp /usr/jails/freebsd32/*.pkg /Users/runner/work/wine-freesbie/wine-freesbie/
 
