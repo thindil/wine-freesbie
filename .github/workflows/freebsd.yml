@@ -38,7 +38,7 @@ jobs:
         mem: 4096
         run: |
           pkg install -y git nim
-          git clone https://git.FreeBSD.org/ports.git /usr/ports
+          git clone https://github.com/freebsd/freebsd-ports.git /usr/ports
           nim --hints:off build.nims ${{ inputs.wineversion }} ${{ inputs.winetype }} >& ${{ inputs.outputfile }}
 
     - name: Upload the output
@@ -76,7 +76,7 @@ jobs:
           sed -i '' -e 's/quarterly/latest/g' /usr/jails/freebsd32/etc/pkg/FreeBSD.conf
           jail -c -f /Users/runner/work/wine-freesbie/wine-freesbie/jail.conf freebsd32
           jexec freebsd32 pkg install -y git nim
-          jexec freebsd32 git clone https://git.FreeBSD.org/ports.git /usr/ports
+          jexec freebsd32 git clone https://github.com/freebsd/freebsd-ports.git /usr/ports
           jexec freebsd32 nim --hints:off build.nims ${{ inputs.wineversion }} ${{ inputs.winetype }} >& ${{ inputs.outputfile }}
           jexec freebsd32 cp work/pkg/*.pkg /
           cp /usr/jails/freebsd32/*.pkg /Users/runner/work/wine-freesbie/wine-freesbie/
