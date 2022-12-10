@@ -26,7 +26,7 @@
 import std/[tables, os, strutils]
 
 # Install needed dependencies for build any type of Wine package.
-exec "pkg install -y libXrender libXrandr libXinerama libXi libXext libXcursor libXcomposite libX11 fontconfig libxml2 gnutls freetype2 gstreamer1-plugins-good gstreamer1-plugins gstreamer1 gcc vulkan-loader png jxrlib libglvnd lcms2 jpeg-turbo sdl2 glib gettext-runtime desktop-file-utils openal-soft FAudio libGLU llvm12 pkgconf gmake flex bison bash s2tc autoconf gawk"
+exec "pkg install -y libXrender libXrandr libXinerama libXi libXext libXcursor libXcomposite libX11 fontconfig libxml2 gnutls freetype2 gstreamer1-plugins-good gstreamer1-plugins gstreamer1 gcc12 vulkan-loader png jxrlib libglvnd lcms2 jpeg-turbo sdl2 glib gettext-runtime desktop-file-utils openal-soft FAudio libGLU llvm12 pkgconf gmake flex bison bash s2tc autoconf gawk"
 # Remove downloaded packages.
 exec "pkg clean -ay"
 
@@ -37,7 +37,7 @@ exec "pkg clean -ay"
 const options = {"7.4": "7249a84325346313c492f47498156eedc23af0ae",
     "7.17": "481a5510a777eec0c9b7b95499422fea5344b932",
     "7.21": "624f970c8499b1d9fef9e187cc28fc9feaaabd13",
-    "7.0-4": ""}.toTable
+    "7.0-5": ""}.toTable
 
 # Set some variables needed to build the selected Wine version.
 let
