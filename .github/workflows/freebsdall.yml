@@ -1,0 +1,82 @@
+name: Build All Wine for FreeBSD
+
+on: workflow_dispatch
+
+jobs:
+  freebsd64:
+    continue-on-error: true
+    strategy:
+      max-parallel: 1
+      matrix:
+        winetype: [devel, staging, patched]
+        wineversion: [7.21, 7.4, 7.17]
+        exclude:
+          - winetype: patched
+            wineversion: 7.17
+        include:
+          - winetype: proton
+            wineversion: 7.0-5
+    runs-on: macos-12
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build Wine for FreeBSD 64-bit
+      uses: vmactions/freebsd-vm@v0
+      with:
+        mem: 4096
+        usesh: true
+        run: |
+          pkg install -y git nim
+          git clone https://github.com/freebsd/freebsd-ports.git /usr/ports
+          nim --hints:off build.nims ${{ matrix.wineversion }} ${{ matrix.winetype }} > /dev/null 2>&1
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: 13.1-amd64
+        tag_name: 13.1-amd64
+        files: '*.pkg'
+
+  freebsd32:
+    continue-on-error: true
+    strategy:
+      max-parallel: 1
+      matrix:
+        winetype: [devel, staging, patched]
+        wineversion: [7.21, 7.4, 7.17]
+        exclude:
+          - winetype: patched
+            wineversion: 7.17
+        include:
+          - winetype: proton
+            wineversion: 7.0-5
+    runs-on: macos-12
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build Wine for FreeBSD 32-bit
+      uses: vmactions/freebsd-vm@v0
+      with:
+        mem: 4096
+        usesh: true
+        run: |
+          mkdir -p /usr/jails/freebsd32
+          cp build.nims /usr/jails/freebsd32/
+          cp -R patches /usr/jails/freebsd32/
+          cp -R new /usr/jails/freebsd32/
+          cd /usr/jails/freebsd32
+          fetch ftp://ftp2.de.freebsd.org/pub/FreeBSD/releases/i386/i386/13.1-RELEASE/base.txz
+          tar xf base.txz
+          rm -rf boot
+          rm base.txz
+          cp /etc/resolv.conf /usr/jails/freebsd32/etc/
+          sed -i '' -e 's/quarterly/latest/g' /usr/jails/freebsd32/etc/pkg/FreeBSD.conf
+          jail -c -f /Users/runner/work/wine-freesbie/wine-freesbie/jail.conf freebsd32
+          jexec freebsd32 pkg install -y git nim
+          jexec freebsd32 git clone https://github.com/freebsd/freebsd-ports.git /usr/ports
+          jexec freebsd32 nim --hints:off build.nims ${{ matrix.wineversion }} ${{ matrix.winetype }} > /dev/null 2>&1
+          jexec freebsd32 cp work/pkg/*.pkg /
+          cp /usr/jails/freebsd32/*.pkg /Users/runner/work/wine-freesbie/wine-freesbie/
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: 13.1-i386
+        tag_name: 13.1-i386
+        files: '*.pkg'
