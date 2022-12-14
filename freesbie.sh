@@ -30,7 +30,7 @@ if [ $# -eq 0 ]; then
     init    - download all needed packages (64-bit and 32-bit)
     install - install the selected version of Wine
     remove  - remove the selected installed version of Wine
-    update  - update the installed 32-bit packages'
+    update  - update the installed packages'
     exit 0
 fi
 
@@ -44,16 +44,17 @@ if [ "$1" = "init" ]; then
    fi
 
    # Create needed directories
-   mkdir -p ~/freesbie/amd64
+   mkdir -p ~/freesbie/amd64/usr/share/keys
    mkdir -p ~/freesbie/i386/usr/share/keys
 
    # Link FreeBSD ports keys
+   ln -s /usr/share/keys/pkg ~/freesbie/amd64/usr/share/keys/pkg
    ln -s /usr/share/keys/pkg ~/freesbie/i386/usr/share/keys/pkg
 
    # Install all needed 64-bit packages to run any version of Wine
-   sudo pkg install -y libXrender libXrandr libXinerama libXi libXext libXcursor libXcomposite libX11 fontconfig libxml2 gnutls freetype2 gstreamer1-plugins-good gstreamer1-plugins gstreamer1 gcc vulkan-loader png jxrlib libglvnd lcms2 jpeg-turbo sdl2 glib gettext-runtime desktop-file-utils openal-soft FAudio libGLU
+   pkg -o ABI=FreeBSD:13:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/amd64 install -y libXrender libXrandr libXinerama libXi libXext libXcursor libXcomposite libX11 fontconfig libxml2 gnutls freetype2 gstreamer1-plugins-good gstreamer1-plugins gstreamer1 gcc vulkan-loader png jxrlib libglvnd lcms2 jpeg-turbo sdl2 glib gettext-runtime desktop-file-utils openal-soft FAudio libGLU
    # Clean downloaded packages
-   sudo pkg clean -ay
+   pkg -o ABI=FreeBSD:13:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/amd64 clean -ay
 
    # Install all needed 32-bit packages to run any version of Wine
    pkg -o ABI=FreeBSD:13:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/i386 install -y libXrender libXrandr libXinerama libXi libXext libXcursor libXcomposite libX11 fontconfig libxml2 gnutls freetype2 gstreamer1-plugins-good gstreamer1-plugins gstreamer1 gcc vulkan-loader png jxrlib libglvnd lcms2 jpeg-turbo sdl2 glib gettext-runtime desktop-file-utils openal-soft FAudio libGLU
@@ -157,7 +158,7 @@ if [ "$1" = "remove" ]; then
    exit 0
 fi
 
-# Update the istalled 32-bit packages
+# Update the installed packages
 if [ "$1" = "update" ]; then
    # Check if Freesbie was initialized. If no, print message and quit
    if [ ! -d ~/freesbie/amd64 ]; then
@@ -165,12 +166,18 @@ if [ "$1" = "update" ]; then
       exit 1
    fi
 
+   # Update the 64-bit packages
+   pkg -o ABI=FreeBSD:13:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/amd64 upgrade -y
+   pkg -o ABI=FreeBSD:13:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/amd64 clean -ay
+   pkg -o ABI=FreeBSD:13:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/amd64 autoremove
+
    # Update the 32-bit packages
    pkg -o ABI=FreeBSD:13:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/i386 upgrade -y
    pkg -o ABI=FreeBSD:13:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/i386 clean -ay
+   pkg -o ABI=FreeBSD:13:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/i386 autoremove
 
    # Print the message and quit
-   echo "32-bit packages needed by Wine updated."
+   echo "The packages needed by Wine updated."
    exit 0
 fi
 
