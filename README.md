@@ -36,10 +36,7 @@ kinds of Wine packages available to use.
 
 To use the project to maintain various versions of Wine installed in the
 system, first you have to download the maintenance script [freesbie.sh](https://raw.githubusercontent.com/thindil/wine-freesbie/main/freesbie.sh).
-It is recommended to put it somewhere in your `PATH` directory. You will need
-also `sudo` package properly configured to allow your user to execute commands.
-This step is needed only for the project initialization (the first step after
-downloading).
+It is recommended to put it somewhere in your `PATH` directory.
 
 1. Download the script. ;) `fetch https://raw.githubusercontent.com/thindil/wine-freesbie/main/freesbie.sh`
    and put it somewhere in your system. This guide assumes that you put the
