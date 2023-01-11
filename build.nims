@@ -1,4 +1,4 @@
-# Copyright © 2022 Bartek Jasicki <thindil@laeran.pl>
+# Copyright © 2022-2023 Bartek Jasicki <thindil@laeran.pl>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 import std/[tables, os, strutils]
 
 # Install needed dependencies for build any type of Wine package.
-exec "pkg install -y libXrender libXrandr libXinerama libXi libXext libXcursor libXcomposite libX11 fontconfig libxml2 gnutls freetype2 gstreamer1-plugins-good gstreamer1-plugins gstreamer1 gcc12 vulkan-loader png jxrlib libglvnd lcms2 jpeg-turbo sdl2 glib gettext-runtime desktop-file-utils openal-soft FAudio libGLU llvm12 pkgconf gmake flex bison bash s2tc autoconf gawk"
+exec "pkg install -y libXrender libXrandr libXinerama libXi libXext libXcursor libXcomposite libX11 fontconfig libxml2 gnutls freetype2 gstreamer1-plugins-good gstreamer1-plugins gstreamer1 gcc12 vulkan-loader png jxrlib libglvnd lcms2 jpeg-turbo sdl2 glib gettext-runtime desktop-file-utils openal-soft FAudio libGLU llvm12 pkgconf gmake flex bison bash s2tc autoconf gawk llvm15 gstreamer1-plugins-x264 gstreamer1-plugins-mpeg2dec gstreamer1-plugins-gl"
 # Remove downloaded packages.
 exec "pkg clean -ay"
 

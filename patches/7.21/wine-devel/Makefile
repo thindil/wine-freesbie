@@ -21,6 +21,9 @@ BUILD_DEPENDS=	${LOCALBASE}/bin/flex:textproc/flex llvm${_LLVM_VERSION}>=0:devel
 USES=		bison cpe desktop-file-utils gmake localbase \
 		pkgconfig sdl shebangfix tar:xz
 USE_GCC=	yes
+USE_GL=		gl
+USE_GNOME=	glib20
+USE_GSTREAMER=	gl mpeg2dec x264
 USE_SDL=	sdl2
 
 CPE_VENDOR=	winehq
@@ -37,7 +40,7 @@ CONFIGURE_ARGS+=--verbose \
 		--without-gettext --without-gettextpo \
 		--without-gphoto \
 		--without-gssapi \
-		--without-gstreamer \
+		--with-gstreamer \
 		--without-inotify \
 		--without-krb5 \
 		--with-mingw CROSSCC="clang" CROSSCFLAGS="-isystem ${FILESDIR}/clang" \
