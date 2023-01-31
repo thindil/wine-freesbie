@@ -31,52 +31,55 @@ exec "pkg install -y libXrender libXrandr libXinerama libXi libXext libXcursor l
 exec "pkg clean -ay"
 
 # The list of available wine versions in list of key = value. Key is the
-# version of Wine, value is the hash of the Git commit for the selected
-# version. If hash is empty, the version doesn't exists in FreeBSD packages
-# tree.
-const options = {"7.4": "7249a84325346313c492f47498156eedc23af0ae",
-    "7.17": "481a5510a777eec0c9b7b95499422fea5344b932",
-    "7.21": "624f970c8499b1d9fef9e187cc28fc9feaaabd13",
-    "7.0-5": ""}.toTable
+# version of Wine, value is array of the hash of the Git commit for the
+# selected version and the base type of wine, used to determine the name of
+# the base FreeBSD package. If hash is empty, the version doesn't exists in
+# FreeBSD packages tree.
+const options = {"7.4": ["7249a84325346313c492f47498156eedc23af0ae", "-devel"],
+    "7.17": ["481a5510a777eec0c9b7b95499422fea5344b932", "-devel"],
+    "7.21": ["624f970c8499b1d9fef9e187cc28fc9feaaabd13", "-devel"],
+    "7.0-5": ["", "-proton"]}.toTable
 
 # Set some variables needed to build the selected Wine version.
 let
   version = paramStr(3)
   fileSubname = paramStr(4)
-  wineType = if fileSubname in ["patched", "staging", "devel"]: "devel" else: "proton"
   homeDir = getCurrentDir()
 
 # The selected Wine version doesn't exists in the list, abort
 if not options.hasKey(version):
   quit "Unknown version of Wine"
 
+# Set the type of wine package to build (proton, development, etc.)
+let wineType = options[version][1]
+
 # Enter the ports' tree and delete existing port so we been sure that there
 # no new patches around.
 cd "/usr/ports"
-rmDir("/usr/ports/emulators/wine-" & wineType)
+rmDir("/usr/ports/emulators/wine" & wineType)
 
 # If build an existing version of Wine, checkout the port with the proper
 # Git commit
-if options[version].len() > 0:
-  exec "git checkout " & options[version] & " emulators/wine-" & wineType
+if options[version][0].len > 0:
+  exec "git checkout " & options[version][0] & " emulators/wine" & wineType
 
 # If build a patched version of Wine, copy the proper patch to the port
 if fileSubname == "patched":
-  cpDir(homeDir & "/patches/" & version & "/wine-" & wineType, "/usr/ports/emulators/wine-" & wineType)
+  cpDir(homeDir & "/patches/" & version & "/wine" & wineType, "/usr/ports/emulators/wine" & wineType)
 
 # If build a new version of Wine, copy the proper port to the ports' tree
-if options[version].len() == 0:
-  cpDir(homeDir & "/new/" & version & "/wine-" & wineType, "/usr/ports/emulators/wine-" & wineType)
+if options[version][0].len == 0:
+  cpDir(homeDir & "/new/" & version & "/wine" & wineType, "/usr/ports/emulators/wine" & wineType)
 
 # Enter the port directory
-cd "emulators/wine-" & wineType
+cd "emulators/wine" & wineType
 
 # Update the distfiles file
-if options[version].len() == 0:
+if options[version][0].len == 0:
   exec "make makesum"
 
 # And build it
-if wineType == "proton":
+if wineType == "-proton":
   exec "make package"
 elif fileSubname == "devel":
   exec "env NO_DIALOG=true make package"
