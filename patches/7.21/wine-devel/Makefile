@@ -19,7 +19,7 @@ ONLY_FOR_ARCHS=	amd64 i386
 BUILD_DEPENDS=	${LOCALBASE}/bin/flex:textproc/flex llvm${_LLVM_VERSION}>=0:devel/llvm${_LLVM_VERSION}
 
 USES=		bison cpe desktop-file-utils gmake localbase \
-		pkgconfig sdl shebangfix tar:xz
+		pkgconfig sdl shebangfix tar:xz pulseaudio
 USE_GCC=	yes
 USE_GL=		gl
 USE_GNOME=	glib20
@@ -49,7 +49,7 @@ CONFIGURE_ARGS+=--verbose \
 		--without-osmesa \
 		--with-pcap \
 		--with-pthread \
-		--without-pulse \
+		--with-pulse \
 		--without-sane \
 		--with-sdl \
 		--without-udev \
