@@ -19,12 +19,13 @@ ONLY_FOR_ARCHS=	amd64 i386
 BUILD_DEPENDS=	${LOCALBASE}/bin/flex:textproc/flex llvm${_LLVM_VERSION}>=0:devel/llvm${_LLVM_VERSION}
 
 USES=		bison cpe desktop-file-utils gmake localbase \
-		pkgconfig sdl shebangfix tar:xz pulseaudio
+		pkgconfig sdl shebangfix tar:xz
 USE_GCC=	yes
 USE_GL=		gl
 USE_GNOME=	glib20
 USE_GSTREAMER=	gl mpeg2dec x264
 USE_SDL=	sdl2
+LIB_DEPENDS=  libpulse.so:audio/pulseaudio
 
 CPE_VENDOR=	winehq
 
