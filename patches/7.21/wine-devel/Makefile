@@ -25,6 +25,7 @@ USE_GL=		gl
 USE_GNOME=	glib20
 USE_GSTREAMER=	gl mpeg2dec x264
 USE_SDL=	sdl2
+LIB_DEPENDS=  libpulse.so:audio/pulseaudio
 
 CPE_VENDOR=	winehq
 
@@ -49,7 +50,7 @@ CONFIGURE_ARGS+=--verbose \
 		--without-osmesa \
 		--with-pcap \
 		--with-pthread \
-		--without-pulse \
+		--with-pulse \
 		--without-sane \
 		--with-sdl \
 		--without-udev \

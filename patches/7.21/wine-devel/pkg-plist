@@ -1473,6 +1473,8 @@ lib/wine/%%WINEARCH%%-unix/winspool.so
 lib/wine/%%WINEARCH%%-unix/wldap32.so
 lib/wine/%%WINEARCH%%-unix/wpcap.so
 lib/wine/%%WINEARCH%%-unix/ws2_32.so
+lib/wine/%%WINEARCH%%-unix/winepulse.so
+lib/wine/%%WINEARCH%%-windows/winepulse.drv
 lib/wine/%%WINEARCH%%-windows/libwinegstreamer.a
 lib/wine/%%WINEARCH%%-windows/winegstreamer.dll
 lib/wine/%%WINEARCH%%-windows/acledit.dll
