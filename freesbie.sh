@@ -27,53 +27,15 @@
 # If the user not entered a command, show the list of available commands
 if [ $# -eq 0 ]; then
     echo 'Available commands are:
-    init    - download all needed packages (64-bit and 32-bit)
     install - install the selected version of Wine
     remove  - remove the selected installed version of Wine
-    update  - update the installed packages'
+    update  - update the installed packages needed by Wine'
     exit 0
-fi
-
-# Initialize Freesbie: create directories and download needed packages, 64-bit
-# and 32-bit.
-if [ "$1" = "init" ]; then
-   # Check if Freesbie was initialized earlier. If yes, print the message and quit
-   if [ -d ~/freesbie/amd64 ]; then
-      echo 'Freesbie initialized already. If not, please remove `freesbie` directory from your home directory before initialization.'
-      exit 1
-   fi
-
-   # Create needed directories
-   mkdir -p ~/freesbie/amd64/usr/share/keys
-   mkdir -p ~/freesbie/i386/usr/share/keys
-
-   # Link FreeBSD ports keys
-   ln -s /usr/share/keys/pkg ~/freesbie/amd64/usr/share/keys/pkg
-   ln -s /usr/share/keys/pkg ~/freesbie/i386/usr/share/keys/pkg
-
-   # Install all needed 64-bit packages to run any version of Wine
-   pkg -o ABI=FreeBSD:13:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/amd64 install -y libXrender libXrandr libXinerama libXi libXext libXcursor libXcomposite libX11 fontconfig libxml2 gnutls freetype2 gstreamer1-plugins-good gstreamer1-plugins gstreamer1 gcc vulkan-loader png jxrlib libglvnd lcms2 jpeg-turbo sdl2 glib gettext-runtime desktop-file-utils openal-soft FAudio libGLU gstreamer1-plugins-x264 gstreamer1-plugins-mpeg2dec gstreamer1-plugins-gl pulseaudio
-   # Clean downloaded packages
-   pkg -o ABI=FreeBSD:13:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/amd64 clean -ay
-
-   # Install all needed 32-bit packages to run any version of Wine
-   pkg -o ABI=FreeBSD:13:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/i386 install -y libXrender libXrandr libXinerama libXi libXext libXcursor libXcomposite libX11 fontconfig libxml2 gnutls freetype2 gstreamer1-plugins-good gstreamer1-plugins gstreamer1 gcc vulkan-loader png jxrlib libglvnd lcms2 jpeg-turbo sdl2 glib gettext-runtime desktop-file-utils openal-soft FAudio libGLU gstreamer1-plugins-x264 gstreamer1-plugins-mpeg2dec gstreamer1-plugins-gl pulseaudio
-   # Clean downloaded packages
-   pkg -o ABI=FreeBSD:13:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/i386 clean -ay
-
-   # Print the message and quit
-   echo "Freesbie initialized. To install a new Wine version type: freesbie.sh install [wine-version]"
-   exit 0
 fi
 
 # Install the selected version of Wine, the list of available Wine versions is
 # here: https://github.com/thindil/wine-freesbie/releases/tag/13.1-amd64
 if [ "$1" = "install" ]; then
-   # Check if Freesbie was initialized. If no, print the message and quit
-   if [ ! -d ~/freesbie/amd64 ]; then
-      echo 'Freesbie not initialized. Cannot install Wine. Run freesbie.sh init first.'
-      exit 1
-   fi
    # Check if the user entered a Wine version to install. If not, print the
    # message and quit.
    if [ $# -eq 1 ]; then
@@ -81,13 +43,35 @@ if [ "$1" = "install" ]; then
        exit 1
    fi
 
+   # Create needed directories
+   if [ ! -d ~/freesbie/amd64 ]; then
+      mkdir -p ~/freesbie/amd64/usr/share/keys
+      mkdir -p ~/freesbie/i386/usr/share/keys
+
+      # Link FreeBSD ports keys
+      ln -s /usr/share/keys/pkg ~/freesbie/amd64/usr/share/keys/pkg
+      ln -s /usr/share/keys/pkg ~/freesbie/i386/usr/share/keys/pkg
+   fi
+
    # Create the temporary directory
    mkdir -p ~/freesbie/tmp
    cd ~/freesbie/tmp
 
-   # Download the selected Wine version, 64-bit and move needed directories
-   # to the proper locations
+   # Download the selected Wine version, 64-bit
    fetch https://github.com/thindil/wine-freesbie/releases/download/13.1-amd64/"$2".pkg
+
+   # Get and install the dependencies for the selected Wine version, 64-bit
+   pkg -o ABI=FreeBSD:13:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/amd64 update
+   pkg info -d -q -F "$2".pkg |
+      while IFS= read -r line
+      do
+         packagename=$(echo "$line" | sed 's/-[0.9]*\.*[0-9]*\.*[0-9]*\.*[0-9]*_*[0-9]*,*[0-9]*$//')
+         pkg -o ABI=FreeBSD:13:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/amd64 install -Uy "$packagename"
+      done
+   pkg -o ABI=FreeBSD:13:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/amd64 clean -ay
+
+   # Extract the selected Wine version, 64-bit and move needed directories to
+   # the proper locations
    tar xf "$2".pkg
    cd usr/local
    if [ -d wine-proton ]; then
@@ -105,9 +89,21 @@ if [ "$1" = "install" ]; then
    cp -r usr ../amd64/
    rm -rf usr
 
-   # Download the selected Wine version, 32-bit and move needed directories
-   # to the proper locations
+   # Download the selected Wine version, 32-bit
    fetch https://github.com/thindil/wine-freesbie/releases/download/13.1-i386/"$2".pkg
+
+   # Get and install the dependencies for the selected Wine version, 64-bit
+   pkg -o ABI=FreeBSD:13:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/i386 update
+   pkg info -d -q -F "$2".pkg |
+      while IFS= read -r line
+      do
+         packagename=$(echo "$line" | sed 's/-[0.9]*\.*[0-9]*\.*[0-9]*\.*[0-9]*_*[0-9]*,*[0-9]*$//')
+         pkg -o ABI=FreeBSD:13:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/i386 install -Uy "$packagename"
+      done
+   pkg -o ABI=FreeBSD:13:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/i386 clean -ay
+
+   # Extract the selected Wine version, 32-bit and move needed directories to
+   # the proper locations
    tar xf "$2".pkg
    cd usr/local
    if [ -d wine-proton ]; then
@@ -137,11 +133,6 @@ fi
 
 # Remove the installed version of Wine, 64-bit and 32-bit versions.
 if [ "$1" = "remove" ]; then
-   # Check if Freesbie was initialized. If no, print message and quit
-   if [ ! -d ~/freesbie/amd64 ]; then
-      echo 'Freesbie not initialized. Nothing to remove. Run freesbie.sh init first.'
-      exit 1
-   fi
    # Check if the user entered a Wine version to remove. If not, print the
    # message and quit.
    if [ $# -eq 1 ]; then
@@ -160,12 +151,6 @@ fi
 
 # Update the installed packages
 if [ "$1" = "update" ]; then
-   # Check if Freesbie was initialized. If no, print message and quit
-   if [ ! -d ~/freesbie/amd64 ]; then
-      echo 'Freesbie not initialized. Nothing to upgrade. Run freesbie.sh init first.'
-      exit 1
-   fi
-
    # Update the 64-bit packages
    pkg -o ABI=FreeBSD:13:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/amd64 upgrade -y
    pkg -o ABI=FreeBSD:13:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/amd64 clean -ay
@@ -182,7 +167,7 @@ if [ "$1" = "update" ]; then
 fi
 
 # The user entered an unknown command. Print the list of available commands and quit
-echo 'Unknown command. Available commands are: init, install, remove, update.'
+echo 'Unknown command. Available commands are: install, remove, update.'
 exit 1
 
 
