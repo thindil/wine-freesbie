@@ -41,20 +41,18 @@ It is recommended to put it somewhere in your `PATH` directory.
 1. Download the script. ;) `fetch https://raw.githubusercontent.com/thindil/wine-freesbie/main/freesbie.sh`
    and put it somewhere in your system. This guide assumes that you put the
    script in your `PATH` directory.
-2. The next step is to initialize the project. As a normal user execute the
-   script with *init* argument: `freesbie.sh init`. It will create all needed
-   directories and download all needed packages, 64 and 32-bit.
-3. Find the version of Wine which you want to install on [Releases](https://github.com/thindil/wine-freesbie/releases)
+2. Find the version of Wine which you want to install on [Releases](https://github.com/thindil/wine-freesbie/releases)
    page. You can install it by running the maintenance script wit arguments
    *install [wine version]*. For example: `freesbie.sh install
-   wine-patched-7.4.1`. It will download both versions of Wine, unpack them to
-   proper locations and modify to work from the project's directory.
+   wine-patched-7.4.1`. It will download both versions of Wine, their
+   dependencies, unpack Wine to proper locations and modify to work from the
+   project's directory.
 
 If you want to remove an installed version of Wine you can do this by running
 the script with arguments *remove [wine version]*. For example: `freesbie.sh
 remove wine-patched-7.4.1`.
 
-To keep 32-bit versions of packages updated, run the maintenance script wit
+To keep dependencies of packages updated, run the maintenance script with
 *update* argument: `freesbie.sh update`.
 
 **IMPORTANT:** When executing a Windows program with any Wine-freesbie version
