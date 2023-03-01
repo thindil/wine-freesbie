@@ -57,68 +57,45 @@ if [ "$1" = "install" ]; then
    mkdir -p ~/freesbie/tmp
    cd ~/freesbie/tmp
 
-   # Download the selected Wine version, 64-bit
-   fetch https://github.com/thindil/wine-freesbie/releases/download/13.1-amd64/"$2".pkg
+   install_wine() {
+      # Download the selected Wine version
+      fetch https://github.com/thindil/wine-freesbie/releases/download/13.1-"$1"/"$2".pkg
 
-   # Get and install the dependencies for the selected Wine version, 64-bit
-   pkg -o ABI=FreeBSD:13:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/amd64 update
-   pkg info -d -q -F "$2".pkg |
-      while IFS= read -r line
-      do
-         packagename=$(echo "$line" | sed 's/-[0.9]*\.*[0-9]*\.*[0-9]*\.*[0-9]*_*[0-9]*,*[0-9]*$//')
-         pkg -o ABI=FreeBSD:13:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/amd64 install -Uy "$packagename"
-      done
-   pkg -o ABI=FreeBSD:13:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/amd64 clean -ay
+      # Get and install the dependencies for the selected Wine version
+      pkg -o ABI=FreeBSD:13:"$1" -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/"$1" update
+      pkg info -d -q -F "$2".pkg |
+         while IFS= read -r line
+         do
+            packagename=$(echo "$line" | sed 's/-[0.9]*\.*[0-9]*\.*[0-9]*\.*[0-9]*_*[0-9]*,*[0-9]*$//')
+            pkg -o ABI=FreeBSD:13:"$1" -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/"$1" install -Uy "$packagename"
+         done
+      pkg -o ABI=FreeBSD:13:"$1" -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/"$1" clean -ay
 
-   # Extract the selected Wine version, 64-bit and move needed directories to
-   # the proper locations
-   tar xf "$2".pkg
-   cd usr/local
-   if [ -d wine-proton ]; then
-      mv wine-proton "$2"
-   else
-      mkdir "$2"
-      mv bin "$2"/
-      mv lib "$2"/
-      mv share "$2"/
-      rm -rf include
-      rm -rf libdata
-      rm -rf man
-   fi
-   cd ~/freesbie/tmp
-   cp -r usr ../amd64/
-   rm -rf usr
+      # Extract the selected Wine version, and move needed directories to
+      # the proper locations
+      tar xf "$2".pkg
+      cd usr/local
+      if [ -d wine-proton ]; then
+         mv wine-proton "$2"
+      else
+         mkdir "$2"
+         mv bin "$2"/
+         mv lib "$2"/
+         mv share "$2"/
+         rm -rf include
+         rm -rf libdata
+         rm -rf man
+      fi
+      cd ~/freesbie/tmp
+      cp -r usr ../"$1"/
+      rm -rf usr
+   }
 
-   # Download the selected Wine version, 32-bit
-   fetch https://github.com/thindil/wine-freesbie/releases/download/13.1-i386/"$2".pkg
+   # Install 64-bit version of Wine
+   install_wine amd64 "$2"
+   # Install 32-bit version of Wine
+   install_wine i386 "$2"
 
-   # Get and install the dependencies for the selected Wine version, 64-bit
-   pkg -o ABI=FreeBSD:13:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/i386 update
-   pkg info -d -q -F "$2".pkg |
-      while IFS= read -r line
-      do
-         packagename=$(echo "$line" | sed 's/-[0.9]*\.*[0-9]*\.*[0-9]*\.*[0-9]*_*[0-9]*,*[0-9]*$//')
-         pkg -o ABI=FreeBSD:13:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/i386 install -Uy "$packagename"
-      done
-   pkg -o ABI=FreeBSD:13:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir ~/freesbie/i386 clean -ay
-
-   # Extract the selected Wine version, 32-bit and move needed directories to
-   # the proper locations
-   tar xf "$2".pkg
-   cd usr/local
-   if [ -d wine-proton ]; then
-      mv wine-proton "$2"
-   else
-      mkdir "$2"
-      mv bin "$2"/
-      mv lib "$2"/
-      mv share "$2"/
-      rm -rf include
-      rm -rf libdata
-      rm -rf man
-   fi
-   cd ~/freesbie/tmp
-   cp -r usr ../i386/
    rm -rf ~/freesbie/tmp
 
    # Install the Freesbie version of Wine startup script
