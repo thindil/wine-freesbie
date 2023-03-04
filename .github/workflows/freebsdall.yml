@@ -17,6 +17,8 @@ jobs:
           - winetype: proton
             wineversion: 7.0-6
           - winetype: proton
+            wineversion: 7.0-32
+          - winetype: proton
             wineversion: 7.0-36
     runs-on: macos-12
     steps:
@@ -50,6 +52,8 @@ jobs:
         include:
           - winetype: proton
             wineversion: 7.0-6
+          - winetype: proton
+            wineversion: 7.0-32
           - winetype: proton
             wineversion: 7.0-36
     runs-on: macos-12
