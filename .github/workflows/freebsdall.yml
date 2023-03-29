@@ -19,6 +19,8 @@ jobs:
           - winetype: proton
             wineversion: 7.0-6
           - winetype: proton
+            wineversion: 7.0-25
+          - winetype: proton
             wineversion: 7.0-29
           - winetype: proton
             wineversion: 7.0-32
@@ -58,6 +60,8 @@ jobs:
             wineversion: 6.3-2
           - winetype: proton
             wineversion: 7.0-6
+          - winetype: proton
+            wineversion: 7.0-25
           - winetype: proton
             wineversion: 7.0-29
           - winetype: proton
