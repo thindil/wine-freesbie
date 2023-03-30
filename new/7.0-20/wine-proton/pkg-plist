@@ -854,7 +854,6 @@ wine-proton/lib/wine/%%WINEARCH%%-windows/gameux.dll
 wine-proton/lib/wine/%%WINEARCH%%-windows/gamingtcui.dll
 wine-proton/lib/wine/%%WINEARCH%%-windows/gdi32.dll
 wine-proton/lib/wine/%%WINEARCH%%-windows/gdiplus.dll
-wine-proton/lib/wine/%%WINEARCH%%-windows/getminidump.exe
 wine-proton/lib/wine/%%WINEARCH%%-windows/glu32.dll
 wine-proton/lib/wine/%%WINEARCH%%-windows/gpkcsp.dll
 wine-proton/lib/wine/%%WINEARCH%%-windows/hal.dll
