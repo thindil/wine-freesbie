@@ -2,14 +2,14 @@
 
 TARGET="$(realpath "$0")"
 PREFIX="usr/local/$(basename $(dirname $(dirname ${TARGET})))"
-LOCALBASE="${PREFIX}"
+LOCALBASE="$(dirname $(dirname $(dirname $(dirname $(dirname $(dirname $TARGET))))))"
 
-I386_ROOT="${WINE_i386_ROOT:-$HOME/freesbie/i386}"
+I386_ROOT="${WINE_i386_ROOT:-$LOCALBASE/i386}"
 
-export LIBGL_DRIVERS_PATH="${LIBGL_DRIVERS_PATH:+$LIBGL_DRIVERS_PATH:}$LOCALBASE/lib/dri:$LOCALBASE/lib32/dri:$I386_ROOT/$LOCALBASE/lib/dri"
+export LIBGL_DRIVERS_PATH="${LIBGL_DRIVERS_PATH:+$LIBGL_DRIVERS_PATH:}/$PREFIX/lib/dri:/$PREFIX/lib32/dri:$I386_ROOT/$PREFIX/lib/dri"
 export LD_32_LIBRARY_PATH="${LD_32_LIBRARY_PATH:+$LD_32_LIBRARY_PATH:}$I386_ROOT/$PREFIX/lib/wine:/usr/local/lib32:$I386_ROOT/usr/local/lib"
-export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}$HOME/freesbie/amd64/$PREFIX/lib/wine:/usr/local/lib:$HOME/freesbie/amd64/$LOCALBASE/lib"
-for d in "$I386_ROOT/$LOCALBASE"/llvm*/lib
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}$LOCALBASE/amd64/$PREFIX/lib/wine:/usr/local/lib:$LOCALBASE/amd64/$PREFIX/lib"
+for d in "$I386_ROOT/$PREFIX"/llvm*/lib
 do
   if [ -d "$d" ]
   then
@@ -20,8 +20,8 @@ export LD_32_LIBRARY_PATH_RPATH=y
 export LD_LIBRARY_PATH_RPATH=y
 export LD_32_LIBMAP="
 libgcc_s.so.1 /usr/lib32/libgcc_s.so.1
-$LOCALBASE/lib/libvulkan_intel.so  $I386_ROOT/$LOCALBASE/lib/libvulkan_intel.so
-$LOCALBASE/lib/libvulkan_radeon.so $I386_ROOT/$LOCALBASE/lib/libvulkan_radeon.so
+$PREFIX/lib/libvulkan_intel.so  $I386_ROOT/$PREFIX/lib/libvulkan_intel.so
+$PREFIX/lib/libvulkan_radeon.so $I386_ROOT/$PREFIX/lib/libvulkan_radeon.so
 $LD_32_LIBMAP"
 
 if [ -z "$WINE_NO_WOW64" ]
