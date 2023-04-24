@@ -83,8 +83,18 @@ if [ "$1" = "install" ]; then
       tar xf "$2".pkg
       cd usr/local
       if [ -d wine-proton ]; then
+         if [ "$1" = "amd64" ]; then
+            elfctl -e +noaslr wine-proton/bin/wine64.bin
+         else
+            elfctl -e +noaslr wine-proton/bin/wine.bin
+         fi
          mv wine-proton "$2"
       else
+         if [ "$1" = "amd64" ]; then
+            elfctl -e +noaslr bin/wine64.bin
+         else
+            elfctl -e +noaslr bin/wine.bin
+         fi
          mkdir "$2"
          mv bin "$2"/
          mv lib "$2"/
