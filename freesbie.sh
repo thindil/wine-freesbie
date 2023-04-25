@@ -77,6 +77,10 @@ if [ "$1" = "install" ]; then
             pkg -o ABI=FreeBSD:13:"$1" -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/$1" install -Uy "$packagename"
          done
       pkg -o ABI=FreeBSD:13:"$1" -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/$1" clean -ay
+      # Install mesa drivers for 32-bit Wine
+      if [ "$1" = "i386" ]; then
+         pkg -o ABI=FreeBSD:13:"$1" -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/$1" install -Uy mesa-dri
+      fi
 
       # Extract the selected Wine version, and move needed directories to
       # the proper locations
