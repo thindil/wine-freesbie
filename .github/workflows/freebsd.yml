@@ -18,14 +18,6 @@ on:
         required: true
         default: "7.4"
         type: string
-      outputfile:
-        description: "Redirect output to"
-        required: true
-        default: "/dev/null"
-        type: choice
-        options:
-        - /dev/null
-        - output.txt
 
 jobs:
   freebsd64:
@@ -33,69 +25,44 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build Wine for FreeBSD 64-bit
-      uses: vmactions/freebsd-vm@v0
+      uses: cross-platform-actions/action@v0.13.0
       with:
-        mem: 4096
-        usesh: true
+        shell: sh
+        operating_system: freebsd
+        architecture: x86-64
+        version: '13.2'
         run: |
-          pkg install -y git nim
-          git clone https://github.com/freebsd/freebsd-ports.git /usr/ports
-          nim --hints:off build.nims ${{ inputs.wineversion }} ${{ inputs.winetype }} > ${{ inputs.outputfile }} 2>&1
-
-    - name: Upload the output
-      uses: actions/upload-artifact@v3
-      if: ${{ always() && inputs.outputfile == 'output.txt'}}
-      with:
-         name: output.txt
-         path: output.txt
+          sudo sed -i '' -e 's/quarterly/latest/g' /etc/pkg/FreeBSD.conf
+          sudo pkg install -y git nim
+          sudo git clone https://github.com/freebsd/freebsd-ports.git /usr/ports
+          sudo nim --hints:off build.nims ${{ inputs.wineversion }} ${{ inputs.winetype }}
 
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
-        name: 13.1-amd64
-        tag_name: 13.1-amd64
+        name: '13.2-amd64'
+        tag_name: '13.2-amd64'
         files: '*.pkg'
+
   freebsd32:
+    continue-on-error: true
+    needs: freebsd64
     runs-on: macos-12
     steps:
     - uses: actions/checkout@v3
     - name: Build Wine for FreeBSD 32-bit
-      uses: vmactions/freebsd-vm@v0
+      uses: cross-platform-actions/action@v0.13.0
       with:
-        mem: 4096
-        usesh: true
+        shell: sh
+        operating_system: freebsd
+        architecture: x86-64
+        version: '13.2'
         run: |
-          mkdir -p /usr/jails/freebsd32
-          cp build.nims /usr/jails/freebsd32/
-          cp -R patches /usr/jails/freebsd32/
-          cp -R new /usr/jails/freebsd32/
-          cd /usr/jails/freebsd32
-          fetch ftp://ftp2.de.freebsd.org/pub/FreeBSD/releases/i386/i386/13.1-RELEASE/base.txz
-          tar xf base.txz
-          rm -rf boot
-          rm base.txz
-          cp /etc/resolv.conf /usr/jails/freebsd32/etc/
-          sed -i '' -e 's/quarterly/latest/g' /usr/jails/freebsd32/etc/pkg/FreeBSD.conf
-          jail -c -f /Users/runner/work/wine-freesbie/wine-freesbie/jail.conf freebsd32
-          jexec freebsd32 pkg install -y git nim
-          jexec freebsd32 git clone https://github.com/freebsd/freebsd-ports.git /usr/ports
-          jexec freebsd32 touch output.txt
-          jexec freebsd32 nim --hints:off build.nims ${{ inputs.wineversion }} ${{ inputs.winetype }} > ${{ inputs.outputfile }} 2>&1
-          jexec freebsd32 cp output.txt /
-          jexec freebsd32 cp work/pkg/*.pkg /
-          cp /usr/jails/freebsd32/output.txt /Users/runner/work/wine-freesbie/wine-freesbie/
-          cp /usr/jails/freebsd32/*.pkg /Users/runner/work/wine-freesbie/wine-freesbie/
-
-    - name: Upload the output
-      uses: actions/upload-artifact@v3
-      if: ${{ always() && inputs.outputfile == 'output.txt'}}
-      with:
-         name: output32.txt
-         path: output.txt
+          sudo sh ./32bit.sh ${{ inputs.wineversion }} ${{ inputs.winetype }}
 
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
-        name: 13.1-i386
-        tag_name: 13.1-i386
+        name: '13.2-i386'
+        tag_name: '13.2-i386'
         files: '*.pkg'
