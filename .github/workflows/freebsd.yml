@@ -1,5 +1,4 @@
 name: Build Wine for FreeBSD
-
 on:
   workflow_dispatch:
     inputs:
@@ -18,10 +17,12 @@ on:
         required: true
         default: "7.4"
         type: string
+run-name: Build wine-${{ inputs.winetype }} ${{ inputs.wineversion }} for FreeBSD 13.2
 
 jobs:
   freebsd64:
     runs-on: macos-12
+    timeout-minutes: 80
     steps:
     - uses: actions/checkout@v3
     - name: Build Wine for FreeBSD 64-bit
@@ -48,6 +49,7 @@ jobs:
     continue-on-error: true
     needs: freebsd64
     runs-on: macos-12
+    timeout-minutes: 80
     steps:
     - uses: actions/checkout@v3
     - name: Build Wine for FreeBSD 32-bit
