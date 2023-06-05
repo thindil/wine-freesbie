@@ -41,7 +41,7 @@ if [ $# -eq 0 ]; then
 fi
 
 # Install the selected version of Wine, the list of available Wine versions is
-# here: https://github.com/thindil/wine-freesbie/releases/tag/13.1-amd64
+# here: https://github.com/thindil/wine-freesbie/releases/tag/13.2-amd64
 if [ "$1" = "install" ]; then
    # Check if the user entered a Wine version to install. If not, print the
    # message and quit.
@@ -66,7 +66,7 @@ if [ "$1" = "install" ]; then
 
    install_wine() {
       # Download the selected Wine version
-      fetch https://github.com/thindil/wine-freesbie/releases/download/13.1-"$1"/"$2".pkg
+      fetch https://github.com/thindil/wine-freesbie/releases/download/13.2-"$1"/"$2".pkg
 
       # Get and install the dependencies for the selected Wine version
       pkg -o ABI=FreeBSD:13:"$1" -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/$1" update

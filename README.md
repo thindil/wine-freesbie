@@ -17,7 +17,7 @@ available in the repository.
 
 All available precompiled Wine versions are on [Releases](https://github.com/thindil/wine-freesbie/releases)
 page. The releases are named in form [FreeBSD Version]-[architecture]. Thus,
-13.1-amd64 means packages for FreeBSD 13.1 with amd64 architecture. There are 3
+13.2-amd64 means packages for FreeBSD 13.2 with amd64 architecture. There are 3
 kinds of Wine packages available to use.
 
 1. *wine-devel* or *wine-proton*: they are vanilla packages build in the same
