@@ -13,7 +13,7 @@ jail -c -f /Users/runner/work/wine-freesbie/wine-freesbie/jail.conf freebsd32
 jexec freebsd32 pkg install -y git nim
 jexec freebsd32 git clone https://github.com/freebsd/freebsd-ports.git /usr/ports
 jexec freebsd32 touch output.txt
-jexec freebsd32 nim --hints:off build.nims "$1" "$2"
+jexec freebsd32 /usr/local/nim/bin/nim --hints:off build.nims "$1" "$2"
 jexec freebsd32 cp output.txt /
 jexec freebsd32 cp work/pkg/*.pkg /
 cp /usr/jails/freebsd32/output.txt /Users/runner/work/wine-freesbie/wine-freesbie/
