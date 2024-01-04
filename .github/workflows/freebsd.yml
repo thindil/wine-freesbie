@@ -17,53 +17,48 @@ on:
         required: true
         default: "7.4"
         type: string
-run-name: Build wine-${{ inputs.winetype }} ${{ inputs.wineversion }} for FreeBSD 13.2
+run-name: Build wine-${{ inputs.winetype }} ${{ inputs.wineversion }} for FreeBSD 14.0
 
 jobs:
   freebsd64:
-    runs-on: macos-12
+    runs-on: ubuntu-latest
     timeout-minutes: 80
     steps:
     - uses: actions/checkout@v3
     - name: Build Wine for FreeBSD 64-bit
-      uses: cross-platform-actions/action@v0.21.1
+      uses: vmactions/freebsd-vm@v1
       with:
-        shell: sh
-        operating_system: freebsd
-        architecture: x86-64
-        version: '13.2'
+        usesh: true
+        prepare: |
+          sed -i '' -e 's/quarterly/latest/g' /etc/pkg/FreeBSD.conf
+          pkg install -y git nim ca_root_nss
         run: |
-          sudo sed -i '' -e 's/quarterly/latest/g' /etc/pkg/FreeBSD.conf
-          sudo pkg install -y git nim
-          sudo git clone https://github.com/freebsd/freebsd-ports.git /usr/ports
-          sudo /usr/local/nim/bin/nim --hints:off build.nims ${{ inputs.wineversion }} ${{ inputs.winetype }}
+          git clone https://github.com/freebsd/freebsd-ports.git /usr/ports
+          /usr/local/nim/bin/nim --hints:off build.nims ${{ inputs.wineversion }} ${{ inputs.winetype }}
 
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
-        name: '13.2-amd64'
-        tag_name: '13.2-amd64'
+        name: '14.0-amd64'
+        tag_name: '14.0-amd64'
         files: '*.pkg'
 
   freebsd32:
     needs: freebsd64
-    runs-on: macos-12
+    runs-on: ubuntu-latest
     timeout-minutes: 80
     steps:
     - uses: actions/checkout@v3
     - name: Build Wine for FreeBSD 32-bit
-      uses: cross-platform-actions/action@v0.21.1
+      uses: vmactions/freebsd-vm@v1
       with:
-        shell: sh
-        operating_system: freebsd
-        architecture: x86-64
-        version: '13.2'
+        usesh: true
         run: |
-          sudo sh ./32bit.sh ${{ inputs.wineversion }} ${{ inputs.winetype }}
+          sh ./32bit.sh ${{ inputs.wineversion }} ${{ inputs.winetype }}
 
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
-        name: '13.2-i386'
-        tag_name: '13.2-i386'
+        name: '14.0-i386'
+        tag_name: '14.0-i386'
         files: '*.pkg'
