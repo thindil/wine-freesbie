@@ -46,6 +46,10 @@ It is recommended to put it somewhere in your `PATH` directory.
    text editor and change value for variable `FREESBIE_PATH`. By default, the
    script install everything in directory *freesbie* in the user's home
    directory.
+3. If you use a different version of FreeBSD than 14.0, you will need to
+   change the configuration of the script. To do it, open the script in the
+   preferred text editor and change value for variables `abiVersion` and
+   `freebsdVersion` located at the top of the script.
 3. Find the version of Wine which you want to install on [Releases](https://github.com/thindil/wine-freesbie/releases)
    page. You can install it by running the maintenance script wit arguments
    *install [wine version]*. For example: `freesbie.sh install
