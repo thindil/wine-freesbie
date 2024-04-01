@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 80
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Build Wine for FreeBSD 64-bit
       uses: vmactions/freebsd-vm@v1
       with:
@@ -37,7 +37,7 @@ jobs:
           /usr/local/nim/bin/nim --hints:off build.nims ${{ inputs.wineversion }} ${{ inputs.winetype }}
 
     - name: Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         name: '14.0-amd64'
         tag_name: '14.0-amd64'
@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 80
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Build Wine for FreeBSD 32-bit
       uses: vmactions/freebsd-vm@v1
       with:
@@ -57,7 +57,7 @@ jobs:
           sh ./32bit.sh ${{ inputs.wineversion }} ${{ inputs.winetype }}
 
     - name: Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         name: '14.0-i386'
         tag_name: '14.0-i386'
