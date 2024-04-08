@@ -26,7 +26,7 @@
 import std/[tables, os, strutils]
 
 # Install needed dependencies for build any type of Wine package.
-exec "pkg install -y libXrender libXrandr libXinerama libXi libXext libXcursor libXcomposite libX11 fontconfig libxml2 gnutls freetype2 gstreamer1-plugins-good gstreamer1-plugins gstreamer1 gcc12 vulkan-loader png jxrlib libglvnd lcms2 jpeg-turbo sdl2 glib gettext-runtime desktop-file-utils openal-soft FAudio libGLU llvm12 pkgconf gmake flex bison bash s2tc autoconf gawk llvm15 gstreamer1-plugins-x264 gstreamer1-plugins-mpeg2dec gstreamer1-plugins-gl gstreamer1-plugins-bad automake pulseaudio"
+exec "pkg install -y libXrender libXrandr libXinerama libXi libXext libXcursor libXcomposite libX11 fontconfig libxml2 gnutls freetype2 gstreamer1-plugins-good gstreamer1-plugins gstreamer1 gcc13 vulkan-loader png jxrlib libglvnd lcms2 jpeg-turbo sdl2 glib gettext-runtime desktop-file-utils openal-soft FAudio libGLU llvm12 pkgconf gmake flex bison bash s2tc autoconf gawk llvm15 gstreamer1-plugins-x264 gstreamer1-plugins-mpeg2dec gstreamer1-plugins-gl gstreamer1-plugins-bad automake pulseaudio"
 # Remove downloaded packages.
 exec "pkg clean -ay"
 
@@ -45,7 +45,8 @@ const options = {"6.3-2": ["fb16dfecae4a6efac9f3a78e0b759fb7a3c53de4", "proton"]
     "7.0-25": ["", "proton"],
     "7.0-29": ["", "proton"],
     "7.0-32": ["", "proton"],
-    "7.0-36": ["", "proton"]}.toTable
+    "7.0-36": ["", "proton"],
+    "8.0-5": ["", "proton"]}.toTable
 
 # Set some variables needed to build the selected Wine version.
 let
