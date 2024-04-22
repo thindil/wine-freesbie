@@ -46,7 +46,8 @@ const options = {"6.3-2": ["fb16dfecae4a6efac9f3a78e0b759fb7a3c53de4", "proton"]
     "7.0-29": ["", "proton"],
     "7.0-32": ["", "proton"],
     "7.0-36": ["", "proton"],
-    "8.0-5": ["", "proton"]}.toTable
+    "8.0-5": ["", "proton"],
+    "8.0-18": ["", "proton"]}.toTable
 
 # Set some variables needed to build the selected Wine version.
 let
