@@ -37,7 +37,7 @@ export FREESBIE_DIR="$HOME/freesbie"
 # of FreeBSD. For example, for 13.2 it will be 13.
 abiVersion=14
 # The FreBSD version for packages.
-freebsdVersion=14.0
+freebsdVersion=14.1
 
 # If the user not entered a command, show the list of available commands
 if [ $# -eq 0 ]; then
