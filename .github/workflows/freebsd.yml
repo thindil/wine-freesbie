@@ -39,8 +39,8 @@ jobs:
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
-        name: '14.0-amd64'
-        tag_name: '14.0-amd64'
+        name: '14.1-amd64'
+        tag_name: '14.1-amd64'
         files: '*.pkg'
 
   freebsd32:
@@ -59,6 +59,6 @@ jobs:
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
-        name: '14.0-i386'
-        tag_name: '14.0-i386'
+        name: '14.1-i386'
+        tag_name: '14.1-i386'
         files: '*.pkg'
