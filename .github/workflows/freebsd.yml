@@ -17,7 +17,7 @@ on:
         required: true
         default: "7.4"
         type: string
-run-name: Build wine-${{ inputs.winetype }} ${{ inputs.wineversion }} for FreeBSD 14.0
+run-name: Build wine-${{ inputs.winetype }} ${{ inputs.wineversion }} for FreeBSD 14.1
 
 jobs:
   freebsd64:
