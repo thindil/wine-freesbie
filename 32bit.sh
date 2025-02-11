@@ -3,7 +3,7 @@ cp build.nims /usr/jails/freebsd32/
 cp -R patches /usr/jails/freebsd32/
 cp -R new /usr/jails/freebsd32/
 cd /usr/jails/freebsd32 || exit
-fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/i386/i386/14.1-RELEASE/base.txz
+fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/i386/i386/14.2-RELEASE/base.txz
 tar xf base.txz
 rm -rf boot
 rm base.txz
