@@ -1,5 +1,5 @@
 #!/bin/sh -e
-# Copyright © 2022-2024 Bartek Jasicki
+# Copyright © 2022-2025 Bartek Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@ export FREESBIE_DIR="$HOME/freesbie"
 # of FreeBSD. For example, for 13.2 it will be 13.
 abiVersion=14
 # The FreBSD version for packages.
-freebsdVersion=14.1
+freebsdVersion=14.2
 
 # If the user not entered a command, show the list of available commands
 if [ $# -eq 0 ]; then
