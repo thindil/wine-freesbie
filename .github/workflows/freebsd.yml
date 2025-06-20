@@ -17,7 +17,7 @@ on:
         required: true
         default: "7.4"
         type: string
-run-name: Build wine-${{ inputs.winetype }} ${{ inputs.wineversion }} for FreeBSD 14.2
+run-name: Build wine-${{ inputs.winetype }} ${{ inputs.wineversion }} for FreeBSD 14.3
 
 jobs:
   freebsd64:
@@ -39,8 +39,8 @@ jobs:
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
-        name: '14.2-amd64'
-        tag_name: '14.2-amd64'
+        name: '14.3-amd64'
+        tag_name: '14.3-amd64'
         files: '*.pkg'
 
   freebsd32:
@@ -59,6 +59,6 @@ jobs:
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
-        name: '14.2-i386'
-        tag_name: '14.2-i386'
+        name: '14.3-i386'
+        tag_name: '14.3-i386'
         files: '*.pkg'
