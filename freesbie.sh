@@ -33,6 +33,8 @@
 # move previously installed Wine to the new location manually. Otherwise the
 # script will install everything again in the new location.
 export FREESBIE_DIR="$HOME/freesbie"
+# Silence error about ABI mismatch version
+export IGNORE_OSVERSION=yes
 # The FreeBSD ABI version for packages. It is equal to the major release number
 # of FreeBSD. For example, for 13.2 it will be 13.
 abiVersion=14
@@ -77,7 +79,7 @@ if [ "$1" = "install" ]; then
       fetch https://github.com/thindil/wine-freesbie/releases/download/$freebsdVersion-"$1"/"$2".pkg
 
       # Get and install the dependencies for the selected Wine version
-      pkg -o ABI=FreeBSD:$abiVersion:"$1" -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/$1" update
+      pkg -o ABI=FreeBSD:$abiVersion:"$1" -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/$1" update -r FreeBSD
       pkg info -d -q -F "$2".pkg |
          while IFS= read -r line
          do
