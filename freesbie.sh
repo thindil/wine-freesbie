@@ -1,5 +1,5 @@
 #!/bin/sh -e
-# Copyright © 2022-2025 Bartek Jasicki
+# Copyright © 2022-2026 Bartek Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,11 +35,19 @@
 export FREESBIE_DIR="$HOME/freesbie"
 # Silence error about ABI mismatch version
 export IGNORE_OSVERSION=yes
-# The FreeBSD ABI version for packages. It is equal to the major release number
-# of FreeBSD. For example, for 13.2 it will be 13.
-abiVersion=14
-# The FreBSD version for packages.
-freebsdVersion=14.3
+# abiVersion - The FreeBSD ABI version for packages. It is equal to the major
+# release number of FreeBSD. For example, for 13.2 it will be 13.
+# freebsdVersion - The FreeBSD version for packages.
+# For FreeBSD 15 both variables must be separated for 32-bit as there is no
+# 32-bit version. If you use on an older version of FreeBSD, set the 32-bit
+# values to the same as for 64-bit
+if [ "$1" = "i386" ]; then
+   abiVersion=14
+   freebsdVersion=14.4
+ else
+   abiVersion=15
+   freebsdVersion=15.0
+fi
 
 # If the user not entered a command, show the list of available commands
 if [ $# -eq 0 ]; then
@@ -164,10 +172,11 @@ if [ "$1" = "update" ]; then
    pkg -o ABI=FreeBSD:$abiVersion:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/amd64" clean -ay
    pkg -o ABI=FreeBSD:$abiVersion:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/amd64" autoremove
 
-   # Update the 32-bit packages
-   pkg -o ABI=FreeBSD:$abiVersion:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/i386" upgrade -y
-   pkg -o ABI=FreeBSD:$abiVersion:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/i386" clean -ay
-   pkg -o ABI=FreeBSD:$abiVersion:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/i386" autoremove
+   # Update the 32-bit packages, for FreeBSD 15 must be used previous version
+   # of FreeBSD. Older releases should change it to $abiVersion instead
+   pkg -o ABI=FreeBSD:14:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/i386" upgrade -y
+   pkg -o ABI=FreeBSD:14:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/i386" clean -ay
+   pkg -o ABI=FreeBSD:14:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/i386" autoremove
 
    # Print the message and quit
    echo "The packages needed by Wine updated."
