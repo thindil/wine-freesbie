@@ -26,7 +26,7 @@
 import std/[tables, os, strutils]
 
 # Install needed dependencies for build any type of Wine package.
-exec "pkg install -y libXrender libXrandr libXinerama libXi libXext libXcursor libXcomposite libX11 fontconfig libxml2 gnutls freetype2 gstreamer1-plugins-good gstreamer1-plugins gstreamer1 gcc14 vulkan-loader png jxrlib libglvnd lcms2 jpeg-turbo sdl2 glib gettext-runtime desktop-file-utils openal-soft FAudio libGLU pkgconf gmake flex bison bash s2tc autoconf gawk gstreamer1-plugins-x264 gstreamer1-plugins-mpeg2dec gstreamer1-plugins-gl gstreamer1-plugins-bad automake pulseaudio llvm19 gettext-tools hwloc2 alsa-lib patchelf py311-meson evdev-proto ffmpeg cmake"
+exec "pkg install -y libXrender libXrandr libXinerama libXi libXext libXcursor libXcomposite libX11 fontconfig libxml2 gnutls freetype2 gstreamer1-plugins-good gstreamer1-plugins gstreamer1 gcc14 vulkan-loader png jxrlib libglvnd lcms2 jpeg-turbo sdl2 glib gettext-runtime desktop-file-utils openal-soft FAudio libGLU pkgconf gmake flex bison bash s2tc autoconf gawk gstreamer1-plugins-x264 gstreamer1-plugins-mpeg2dec gstreamer1-plugins-gl gstreamer1-plugins-bad automake pulseaudio llvm19 gettext-tools hwloc2 alsa-lib patchelf meson evdev-proto ffmpeg cmake"
 # Remove downloaded packages.
 exec "pkg clean -ay"
 
