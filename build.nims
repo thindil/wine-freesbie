@@ -26,7 +26,7 @@
 import std/[tables, os, strutils]
 
 # Install needed dependencies for build any type of Wine package.
-exec "pkg install -y libXrender libXrandr libXinerama libXi libXext libXcursor libXcomposite libX11 fontconfig libxml2 gnutls freetype2 gstreamer1-plugins-good gstreamer1-plugins gstreamer1 gcc14 vulkan-loader png jxrlib libglvnd lcms2 jpeg-turbo sdl2 glib gettext-runtime desktop-file-utils openal-soft FAudio libGLU llvm12 pkgconf gmake flex bison bash s2tc autoconf gawk llvm15 gstreamer1-plugins-x264 gstreamer1-plugins-mpeg2dec gstreamer1-plugins-gl gstreamer1-plugins-bad automake pulseaudio llvm19"
+exec "pkg install -y libXrender libXrandr libXinerama libXi libXext libXcursor libXcomposite libX11 fontconfig libxml2 gnutls freetype2 gstreamer1-plugins-good gstreamer1-plugins gstreamer1 gcc14 vulkan-loader png jxrlib libglvnd lcms2 jpeg-turbo sdl2 glib gettext-runtime desktop-file-utils openal-soft FAudio libGLU pkgconf gmake flex bison bash s2tc autoconf gawk gstreamer1-plugins-x264 gstreamer1-plugins-mpeg2dec gstreamer1-plugins-gl gstreamer1-plugins-bad automake pulseaudio llvm19"
 # Remove downloaded packages.
 exec "pkg clean -ay"
 
@@ -35,22 +35,9 @@ exec "pkg clean -ay"
 # selected version and the base type of wine, used to determine the name of
 # the base FreeBSD package. If hash is empty, the version doesn't exists in
 # FreeBSD packages tree.
-const options = {"6.3-2": ["fb16dfecae4a6efac9f3a78e0b759fb7a3c53de4", "proton"],
-    "7.4": ["7249a84325346313c492f47498156eedc23af0ae", "devel"],
-    "7.17": ["481a5510a777eec0c9b7b95499422fea5344b932", "devel"],
-    "7.21": ["624f970c8499b1d9fef9e187cc28fc9feaaabd13", "devel"],
-    "7.0-6": ["", "proton"],
-    "7.0-10": ["", "proton"],
-    "7.0-20": ["", "proton"],
-    "7.0-25": ["", "proton"],
-    "7.0-29": ["", "proton"],
-    "7.0-32": ["", "proton"],
-    "7.0-36": ["", "proton"],
-    "8.0-5": ["", "proton"],
-    "8.0-18": ["", "proton"],
+const options = {"11.0": ["05881e75d3c4788969a0cfe38c244e243fd1cb7b", "devel"],
     "8.0-25": ["", "proton"],
-    "9.0-2": ["a88263a6420ecbce75c6937e255d09cca65bab97", "proton"],
-    "9.0-3": ["84c1cefbbf7cbe6e08f0c570e2ce88d6aee09cfc", "proton"]}.toTable
+    "9.0-2": ["a88263a6420ecbce75c6937e255d09cca65bab97", "proton"]}.toTable
 
 # Set some variables needed to build the selected Wine version.
 let

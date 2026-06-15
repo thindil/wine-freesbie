@@ -5,7 +5,7 @@ on:
       winetype:
         description: "The type of Wine to build"
         required: true
-        default: "proton"
+        default: "devel"
         type: choice
         options:
         - staging
@@ -15,7 +15,7 @@ on:
       wineversion:
         description: "The version of Wine to build"
         required: true
-        default: "6.3-2"
+        default: "11.0"
         type: string
 run-name: Build wine-${{ inputs.winetype }} ${{ inputs.wineversion }} for FreeBSD 15.0
 
