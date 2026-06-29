@@ -46,7 +46,7 @@ if [ "$1" = "i386" ]; then
    freebsdVersion=14.4
  else
    abiVersion=15
-   freebsdVersion=15.0
+   freebsdVersion=15.1
 fi
 
 # If the user not entered a command, show the list of available commands
