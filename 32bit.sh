@@ -8,7 +8,8 @@ tar xf base.txz
 rm -rf boot
 rm base.txz
 cp /etc/resolv.conf /usr/jails/freebsd32/etc/
-sed -i '' -e 's/quarterly/latest/g' /usr/jails/freebsd32/etc/pkg/FreeBSD.conf
+# Temporary disabled due to problems with ffmpeg in 14.4 i386
+#sed -i '' -e 's/quarterly/latest/g' /usr/jails/freebsd32/etc/pkg/FreeBSD.conf
 jail -c -f /root/work/wine-freesbie/wine-freesbie/jail.conf freebsd32
 jexec freebsd32 pkg install -y git nim ca_root_nss
 jexec freebsd32 git clone https://github.com/freebsd/freebsd-ports.git /usr/ports
