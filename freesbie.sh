@@ -36,18 +36,10 @@ export FREESBIE_DIR="$HOME/freesbie"
 # Silence error about ABI mismatch version
 export IGNORE_OSVERSION=yes
 # abiVersion - The FreeBSD ABI version for packages. It is equal to the major
-# release number of FreeBSD. For example, for 13.2 it will be 13.
+# release number of FreeBSD. For example, for 15.1 it will be 15.
 # freebsdVersion - The FreeBSD version for packages.
-# For FreeBSD 15 both variables must be separated for 32-bit as there is no
-# 32-bit version. If you use on an older version of FreeBSD, set the 32-bit
-# values to the same as for 64-bit
-if [ "$1" = "i386" ]; then
-   abiVersion=14
-   freebsdVersion=14.4
- else
-   abiVersion=15
-   freebsdVersion=15.1
-fi
+ abiVersion=15
+ freebsdVersion=15.1
 
 # If the user not entered a command, show the list of available commands
 if [ $# -eq 0 ]; then
@@ -64,7 +56,7 @@ if [ "$1" = "install" ]; then
    # Check if the user entered a Wine version to install. If not, print the
    # message and quit.
    if [ $# -eq 1 ]; then
-       echo 'Enter a Wine version to install, example: freesbie.sh install wine-patched-7.4.1'
+       echo 'Enter a Wine version to install, example: freesbie.sh install wine-devel-10.14'
        exit 1
    fi
 
@@ -95,10 +87,6 @@ if [ "$1" = "install" ]; then
             pkg -o ABI=FreeBSD:$abiVersion:"$1" -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/$1" install -Uy "$packagename"
          done
       pkg -o ABI=FreeBSD:$abiVersion:"$1" -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/$1" clean -ay
-      # Install mesa drivers for 32-bit Wine
-      if [ "$1" = "i386" ]; then
-         pkg -o ABI=FreeBSD:$abiVersion:"$1" -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/$1" install -Uy mesa-dri
-      fi
 
       # Extract the selected Wine version, and move needed directories to
       # the proper locations
@@ -132,15 +120,8 @@ if [ "$1" = "install" ]; then
 
    # Install 64-bit version of Wine
    install_wine amd64 "$2"
-   # Install 32-bit version of Wine
-   install_wine i386 "$2"
 
    rm -rf "$FREESBIE_DIR/tmp"
-
-   # Install the Freesbie version of Wine startup script
-   cd "$FREESBIE_DIR/amd64/usr/local/$2/bin"
-   fetch https://raw.githubusercontent.com/thindil/wine-freesbie/main/wine
-   chmod 744 wine
 
    # Print the message and quit
    echo "Wine $2 istalled. Full path to the Wine executable: $FREESBIE_DIR/amd64/usr/local/$2/bin/wine64 (for 32-bit programs too). To remove this version, type: freesbie.sh remove $2"
@@ -152,13 +133,12 @@ if [ "$1" = "remove" ]; then
    # Check if the user entered a Wine version to remove. If not, print the
    # message and quit.
    if [ $# -eq 1 ]; then
-       echo 'Enter a Wine version to remove, example: freesbie.sh remove wine-patched-7.4.1'
+       echo 'Enter a Wine version to remove, example: freesbie.sh remove wine-devel-11.14'
        exit 1
    fi
 
    # Remove both versions of the Wine
    rm -rf "$FREESBIE_DIR/amd64/usr/local/$2"
-   rm -rf "$FREESBIE_DIR/i386/usr/local/$2"
 
    # Print the message and quit
    echo "Wine $2 removed."
@@ -171,12 +151,6 @@ if [ "$1" = "update" ]; then
    pkg -o ABI=FreeBSD:$abiVersion:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/amd64" upgrade -y
    pkg -o ABI=FreeBSD:$abiVersion:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/amd64" clean -ay
    pkg -o ABI=FreeBSD:$abiVersion:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/amd64" autoremove
-
-   # Update the 32-bit packages, for FreeBSD 15 must be used previous version
-   # of FreeBSD. Older releases should change it to $abiVersion instead
-   pkg -o ABI=FreeBSD:14:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/i386" upgrade -y
-   pkg -o ABI=FreeBSD:14:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/i386" clean -ay
-   pkg -o ABI=FreeBSD:14:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/i386" autoremove
 
    # Print the message and quit
    echo "The packages needed by Wine updated."

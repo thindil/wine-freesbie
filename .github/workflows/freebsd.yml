@@ -15,7 +15,7 @@ on:
       wineversion:
         description: "The version of Wine to build"
         required: true
-        default: "11.0"
+        default: "11.14"
         type: string
 run-name: Build wine-${{ inputs.winetype }} ${{ inputs.wineversion }} for FreeBSD 15.1
 
@@ -39,27 +39,6 @@ jobs:
     - name: Release
       uses: softprops/action-gh-release@v3
       with:
-        name: '15.1-amd64'
-        tag_name: '15.1-amd64'
-        files: '*.pkg'
-
-  freebsd32:
-    needs: freebsd64
-    runs-on: ubuntu-latest
-    timeout-minutes: 80
-    steps:
-    - uses: actions/checkout@v7
-    - name: Build Wine for FreeBSD 32-bit
-      uses: vmactions/freebsd-vm@v1
-      with:
-        usesh: true
-        release: "14.4"
-        run: |
-          sh ./32bit.sh ${{ inputs.wineversion }} ${{ inputs.winetype }}
-
-    - name: Release
-      uses: softprops/action-gh-release@v3
-      with:
-        name: '15.1-i386'
-        tag_name: '15.1-i386'
+        name: '15.1'
+        tag_name: '15.1'
         files: '*.pkg'

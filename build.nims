@@ -35,7 +35,7 @@ exec "pkg clean -ay"
 # selected version and the base type of wine, used to determine the name of
 # the base FreeBSD package. If hash is empty, the version doesn't exists in
 # FreeBSD packages tree.
-const options = {"11.0": ["05881e75d3c4788969a0cfe38c244e243fd1cb7b", "devel"],
+const options = {"11.14": ["d36ade8b08b94efe8050eb1a8f3681ad49589b62", "devel"],
     "8.0-25": ["", "proton"],
     "9.0-2": ["a88263a6420ecbce75c6937e255d09cca65bab97", "proton"]}.toTable
 
