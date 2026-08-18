@@ -82,8 +82,9 @@ exec "make package"
 
 # Copy the build package to the starting directory so it can be moved later
 # to download.
-let
-  files = listFiles("work/pkg")
-  newName = replace(files[0], wineType, paramStr(4)).extractFilename()
+var files = listFiles("work/pkg")
+if files.len == 0:
+  files = listFiles("work-default/pkg")
+let newName = replace(files[0], wineType, paramStr(4)).extractFilename()
 
 cpFile(files[0], homeDir & "/" & newName)
