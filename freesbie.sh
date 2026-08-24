@@ -56,7 +56,7 @@ if [ "$1" = "install" ]; then
    # Check if the user entered a Wine version to install. If not, print the
    # message and quit.
    if [ $# -eq 1 ]; then
-       echo 'Enter a Wine version to install, example: freesbie.sh install wine-devel-10.14'
+       echo 'Enter a Wine version to install, example: freesbie.sh install wine-devel-11.14.1'
        exit 1
    fi
 
@@ -76,10 +76,10 @@ if [ "$1" = "install" ]; then
 
    install_wine() {
       # Download the selected Wine version
-      fetch https://github.com/thindil/wine-freesbie/releases/download/$freebsdVersion-"$1"/"$2".pkg
+      fetch https://github.com/thindil/wine-freesbie/releases/download/$freebsdVersion/"$2".pkg
 
       # Get and install the dependencies for the selected Wine version
-      pkg -o ABI=FreeBSD:$abiVersion:"$1" -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/$1" update -r FreeBSD
+      pkg -o ABI=FreeBSD:$abiVersion:"$1" -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/$1" update -r FreeBSD-ports
       pkg info -d -q -F "$2".pkg |
          while IFS= read -r line
          do
@@ -100,11 +100,6 @@ if [ "$1" = "install" ]; then
          fi
          mv wine-proton "$2"
       else
-         if [ "$1" = "amd64" ]; then
-            elfctl -e +noaslr bin/wine64.bin
-         else
-            elfctl -e +noaslr bin/wine.bin
-         fi
          mkdir "$2"
          mv bin "$2"/
          mv lib "$2"/
@@ -124,7 +119,7 @@ if [ "$1" = "install" ]; then
    rm -rf "$FREESBIE_DIR/tmp"
 
    # Print the message and quit
-   echo "Wine $2 istalled. Full path to the Wine executable: $FREESBIE_DIR/amd64/usr/local/$2/bin/wine64 (for 32-bit programs too). To remove this version, type: freesbie.sh remove $2"
+   echo "Wine $2 istalled. Full path to the Wine executable: $FREESBIE_DIR/amd64/usr/local/$2/bin/wine . To remove this version, type: freesbie.sh remove $2"
    exit 0
 fi
 
@@ -133,7 +128,7 @@ if [ "$1" = "remove" ]; then
    # Check if the user entered a Wine version to remove. If not, print the
    # message and quit.
    if [ $# -eq 1 ]; then
-       echo 'Enter a Wine version to remove, example: freesbie.sh remove wine-devel-11.14'
+       echo 'Enter a Wine version to remove, example: freesbie.sh remove wine-devel-11.14.1'
        exit 1
    fi
 
