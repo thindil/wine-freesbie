@@ -16,8 +16,8 @@ available in the repository.
 ## Wine versions
 
 All available precompiled Wine versions are on [Releases](https://github.com/thindil/wine-freesbie/releases)
-page. The releases are named in form [FreeBSD Version]-[architecture]. Thus,
-13.2-amd64 means packages for FreeBSD 13.2 with amd64 architecture. There are 3
+page. The releases are named in form [FreeBSD Version]. Thus,
+15.1 means packages for FreeBSD 15.1 with amd64 architecture. There are 3
 kinds of Wine packages available to use.
 
 1. *wine-devel* or *wine-proton*: they are vanilla packages build in the same
@@ -46,29 +46,23 @@ It is recommended to put it somewhere in your `PATH` directory.
    text editor and change value for variable `FREESBIE_PATH`. By default, the
    script install everything in directory *freesbie* in the user's home
    directory.
-3. If you use a different version of FreeBSD than 14.0, you will need to
-   change the configuration of the script. To do it, open the script in the
-   preferred text editor and change value for variables `abiVersion` and
-   `freebsdVersion` located at the top of the script.
 3. Find the version of Wine which you want to install on [Releases](https://github.com/thindil/wine-freesbie/releases)
    page. You can install it by running the maintenance script wit arguments
    *install [wine version]*. For example: `freesbie.sh install
-   wine-patched-7.4.1`. It will download both versions of Wine, their
-   dependencies, unpack Wine to proper locations and modify to work from the
+   wine-devel-11.14.1`. It will download the Wine package, its dependencies,
+   unpack Wine to proper locations and modify to work from the
    project's directory.
 
 If you want to remove an installed version of Wine you can do this by running
 the script with arguments *remove [wine version]*. For example: `freesbie.sh
-remove wine-patched-7.4.1`.
+remove wine-devel-11.14.1`.
 
 To keep dependencies of packages updated, run the maintenance script with
 *update* argument: `freesbie.sh update`.
 
-**IMPORTANT:** When executing a Windows program with any Wine-freesbie version
-of Wine, use for it `wine64` script not `wine`. Even the 32-bit version of
-program. The proper way to run a program:
+The proper way to run a program:
 
-`~/freesbie/amd64/usr/local/wine-patched-7.4.1/bin/wine64 myprogram.exe`
+`~/freesbie/amd64/usr/local/wine-devel-11.14.1/bin/wine myprogram.exe`
 
 The same is true for Wine utilities like `winecfg`, etc.
 
@@ -98,8 +92,7 @@ versions without proof that they can be build will not be accepted.
 
 Try to use another version of Wine. Don't report a problem if something doesn't
 work. It is beyond of scope of the project. The exception to the rule are
-bugs or issues created by the project, like the one mentioned in **IMPORTANT**
-paragraph above.
+bugs or issues created by the project.
 
 ##### I have question not mentioned here, or I want to discuss something related to the project.
 
