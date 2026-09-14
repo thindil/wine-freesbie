@@ -1,5 +1,5 @@
 #!/bin/sh -e
-# Copyright © 2022-2025 Bartek Jasicki
+# Copyright © 2022-2026 Bartek Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,11 +35,11 @@
 export FREESBIE_DIR="$HOME/freesbie"
 # Silence error about ABI mismatch version
 export IGNORE_OSVERSION=yes
-# The FreeBSD ABI version for packages. It is equal to the major release number
-# of FreeBSD. For example, for 13.2 it will be 13.
-abiVersion=14
-# The FreBSD version for packages.
-freebsdVersion=14.3
+# abiVersion - The FreeBSD ABI version for packages. It is equal to the major
+# release number of FreeBSD. For example, for 15.1 it will be 15.
+# freebsdVersion - The FreeBSD version for packages.
+ abiVersion=15
+ freebsdVersion=15.1
 
 # If the user not entered a command, show the list of available commands
 if [ $# -eq 0 ]; then
@@ -56,18 +56,16 @@ if [ "$1" = "install" ]; then
    # Check if the user entered a Wine version to install. If not, print the
    # message and quit.
    if [ $# -eq 1 ]; then
-       echo 'Enter a Wine version to install, example: freesbie.sh install wine-patched-7.4.1'
+       echo 'Enter a Wine version to install, example: freesbie.sh install wine-devel-11.14.1'
        exit 1
    fi
 
    # Create needed directories
-   if [ ! -d "$FREESBIE_DIR/amd64" ]; then
-      mkdir -p "$FREESBIE_DIR/amd64/usr/share/keys"
-      mkdir -p "$FREESBIE_DIR/i386/usr/share/keys"
+   if [ ! -d "$FREESBIE_DIR" ]; then
+      mkdir -p "$FREESBIE_DIR/usr/share/keys"
 
       # Link FreeBSD ports keys
-      ln -s /usr/share/keys/pkg "$FREESBIE_DIR/amd64/usr/share/keys/pkg"
-      ln -s /usr/share/keys/pkg "$FREESBIE_DIR/i386/usr/share/keys/pkg"
+      ln -s /usr/share/keys/pkg "$FREESBIE_DIR/usr/share/keys/pkg"
    fi
 
    # Create the temporary directory
@@ -76,21 +74,17 @@ if [ "$1" = "install" ]; then
 
    install_wine() {
       # Download the selected Wine version
-      fetch https://github.com/thindil/wine-freesbie/releases/download/$freebsdVersion-"$1"/"$2".pkg
+      fetch https://github.com/thindil/wine-freesbie/releases/download/$freebsdVersion/"$2".pkg
 
       # Get and install the dependencies for the selected Wine version
-      pkg -o ABI=FreeBSD:$abiVersion:"$1" -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/$1" update -r FreeBSD
+      pkg -o ABI=FreeBSD:$abiVersion:"$1" -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR" update -r FreeBSD-ports
       pkg info -d -q -F "$2".pkg |
          while IFS= read -r line
          do
             packagename=$(echo "$line" | sed 's/-[0.9]*\.*[0-9]*\.*[0-9]*\.*[0-9]*_*[0-9]*,*[0-9]*$//')
-            pkg -o ABI=FreeBSD:$abiVersion:"$1" -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/$1" install -Uy "$packagename"
+            pkg -o ABI=FreeBSD:$abiVersion:"$1" -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR" install -Uy "$packagename"
          done
-      pkg -o ABI=FreeBSD:$abiVersion:"$1" -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/$1" clean -ay
-      # Install mesa drivers for 32-bit Wine
-      if [ "$1" = "i386" ]; then
-         pkg -o ABI=FreeBSD:$abiVersion:"$1" -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/$1" install -Uy mesa-dri
-      fi
+      pkg -o ABI=FreeBSD:$abiVersion:"$1" -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR" clean -ay
 
       # Extract the selected Wine version, and move needed directories to
       # the proper locations
@@ -104,11 +98,6 @@ if [ "$1" = "install" ]; then
          fi
          mv wine-proton "$2"
       else
-         if [ "$1" = "amd64" ]; then
-            elfctl -e +noaslr bin/wine64.bin
-         else
-            elfctl -e +noaslr bin/wine.bin
-         fi
          mkdir "$2"
          mv bin "$2"/
          mv lib "$2"/
@@ -118,24 +107,17 @@ if [ "$1" = "install" ]; then
          rm -rf man
       fi
       cd "$FREESBIE_DIR/tmp"
-      cp -r usr ../"$1"/
+      cp -r usr ..
       rm -rf usr
    }
 
    # Install 64-bit version of Wine
    install_wine amd64 "$2"
-   # Install 32-bit version of Wine
-   install_wine i386 "$2"
 
    rm -rf "$FREESBIE_DIR/tmp"
 
-   # Install the Freesbie version of Wine startup script
-   cd "$FREESBIE_DIR/amd64/usr/local/$2/bin"
-   fetch https://raw.githubusercontent.com/thindil/wine-freesbie/main/wine
-   chmod 744 wine
-
    # Print the message and quit
-   echo "Wine $2 istalled. Full path to the Wine executable: $FREESBIE_DIR/amd64/usr/local/$2/bin/wine64 (for 32-bit programs too). To remove this version, type: freesbie.sh remove $2"
+   echo "Wine $2 istalled. Full path to the Wine executable: $FREESBIE_DIR/usr/local/$2/bin/wine . To remove this version, type: freesbie.sh remove $2"
    exit 0
 fi
 
@@ -144,13 +126,12 @@ if [ "$1" = "remove" ]; then
    # Check if the user entered a Wine version to remove. If not, print the
    # message and quit.
    if [ $# -eq 1 ]; then
-       echo 'Enter a Wine version to remove, example: freesbie.sh remove wine-patched-7.4.1'
+       echo 'Enter a Wine version to remove, example: freesbie.sh remove wine-devel-11.14.1'
        exit 1
    fi
 
    # Remove both versions of the Wine
-   rm -rf "$FREESBIE_DIR/amd64/usr/local/$2"
-   rm -rf "$FREESBIE_DIR/i386/usr/local/$2"
+   rm -rf "$FREESBIE_DIR/usr/local/$2"
 
    # Print the message and quit
    echo "Wine $2 removed."
@@ -160,14 +141,9 @@ fi
 # Update the installed packages
 if [ "$1" = "update" ]; then
    # Update the 64-bit packages
-   pkg -o ABI=FreeBSD:$abiVersion:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/amd64" upgrade -y
-   pkg -o ABI=FreeBSD:$abiVersion:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/amd64" clean -ay
-   pkg -o ABI=FreeBSD:$abiVersion:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/amd64" autoremove
-
-   # Update the 32-bit packages
-   pkg -o ABI=FreeBSD:$abiVersion:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/i386" upgrade -y
-   pkg -o ABI=FreeBSD:$abiVersion:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/i386" clean -ay
-   pkg -o ABI=FreeBSD:$abiVersion:i386 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR/i386" autoremove
+   pkg -o ABI=FreeBSD:$abiVersion:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR" upgrade -y
+   pkg -o ABI=FreeBSD:$abiVersion:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR" clean -ay
+   pkg -o ABI=FreeBSD:$abiVersion:amd64 -o INSTALL_AS_USER=true -o RUN_SCRIPTS=false --rootdir "$FREESBIE_DIR" autoremove
 
    # Print the message and quit
    echo "The packages needed by Wine updated."
