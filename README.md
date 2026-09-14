@@ -62,7 +62,7 @@ To keep dependencies of packages updated, run the maintenance script with
 
 The proper way to run a program:
 
-`~/freesbie/amd64/usr/local/wine-devel-11.14.1/bin/wine myprogram.exe`
+`~/freesbie/usr/local/wine-devel-11.14.1/bin/wine myprogram.exe`
 
 The same is true for Wine utilities like `winecfg`, etc.
 
