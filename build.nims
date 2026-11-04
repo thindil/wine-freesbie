@@ -37,7 +37,7 @@ exec "pkg clean -ay"
 # FreeBSD packages tree.
 const options = {"11.14": ["d36ade8b08b94efe8050eb1a8f3681ad49589b62", "devel"],
     "8.0-25": ["", "proton"],
-    "9.0-2": ["a88263a6420ecbce75c6937e255d09cca65bab97", "proton"]}.toTable
+    "11.20": ["08e83b9714c6cd46acf7792a5fe9b9a0f2e854e0", "devel"]}.toTable
 
 # Set some variables needed to build the selected Wine version.
 let
@@ -74,9 +74,6 @@ if options[version][0].len == 0:
 cd "emulators/wine-" & wineType
 
 # And build it, setting all neede environment variables too
-if fileSubname in ["staging", "patched"] and wineType == "devel":
-  rmDir "/usr/ports/.git"
-  putEnv("WITH", "STAGING")
 putEnv("NO_DIALOG", "true")
 exec "make package"
 
